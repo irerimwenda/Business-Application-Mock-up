@@ -1,4 +1,5 @@
-const User = require('../../models/transactions')
+const Transaction = require('../../models/transactions')
+const mongoose = require('mongoose')
 
 module.exports = function(router) {
 
@@ -41,7 +42,11 @@ module.exports = function(router) {
         const pipeline = [
             {
                 $match: {
-                    userId: userId,
+                    userId: mongoose.Types.ObjectId(userId),
+                }
+            },
+            {
+                $match: {
                     transactionDate: { $lt: endDate }
                 }
             },
