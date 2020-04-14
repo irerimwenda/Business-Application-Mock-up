@@ -4,15 +4,15 @@
             <span class="pr-3">
                 Transactions for {{months[currentMonth].name}} - {{currentYear}}
             </span>
-            <v-btn flat icon class="pr-2" v-on:click="gotoMonth(-1)">
+            <v-btn text icon class="pr-2" v-on:click="gotoMonth(-1)">
                 <v-icon>mdi-arrow-left</v-icon>
             </v-btn>
 
-            <v-btn flat icon class="pr-2" v-on:click="gotoCurrentMonth">
+            <v-btn text icon class="pr-2" v-on:click="gotoCurrentMonth">
                 <v-icon>mdi-calendar-today</v-icon>
             </v-btn>
 
-            <v-btn flat icon v-on:click="gotoMonth(1)">
+            <v-btn text icon v-on:click="gotoMonth(1)">
                 <v-icon>mdi-arrow-right</v-icon>
             </v-btn>
 
@@ -60,7 +60,7 @@
             </template>
 
             <template slot="expand" slot-scope="props">
-                <v-card flat class="pl-5">
+                <v-card text class="pl-5">
                     <v-card-text class="text-xs-left">
                         <v-text-field label="Note" v-model="props.item.notes"></v-text-field>
                     </v-card-text>
@@ -118,6 +118,52 @@ export default {
 
                 }
             ]
+        }
+    },
+    methods: {
+        getTransactionsByMonth() {
+
+        },
+        getPreviousMonthBalances() {
+
+        },
+        mapTransaction: function (tx) {
+            const me = this
+            const transDate = new Date(tx.transactionDate)
+            let transaction = {
+                transactionDate: me.months[transDate.getUTCMonth() + 1].abrev + '-' + transDate,
+                transactionType: tx.transactionType,
+                description: tx.description,
+                charge: me.moneyFormatter(tx.charge),
+                deposit: me.moneyFormatter(tx.deposit),
+                balance: me.moneyFormatter(me.calcRunningBalance(tx))
+            }
+
+            return transaction
+        },
+        moneyFormatter: function (amount) {
+            let formatter = new Intl.NumberFormat('en-us', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2
+            })
+            return formatter.format(amount)
+        },
+        calcRunningBalance: function (tx) {
+
+            // Check any new charges
+            if(tx && tx.charge > 0) {
+                this.balanceCharges += tx.charge
+            } else if(tx && tx.deposit > 0) {
+                this.balanceDeposits += tx.deposit
+            }
+            return this.balanceCharges - this.balanceDeposits
+        },
+        gotoMonth(increment) {
+            console.log('okay')
+        },
+        gotoCurrentMonth() {
+            console.log('current')
         }
     }
 }
