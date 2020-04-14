@@ -13,9 +13,9 @@ const getters = {
 
 const actions = {
     logInUser ({ commit }, payload) {
-
+        // Call into API
         if(payload.email === 'test@email.com' && payload.password === 'password') {
-
+            // Simulate getting back a valid userId from API call
             payload.userId = 'test'
             commit('logInUser', payload)
         } else {

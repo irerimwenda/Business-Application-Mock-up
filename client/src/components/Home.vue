@@ -86,7 +86,7 @@
         style="width: 300px"
         class="ml-0 pl-4"
       >
-        <span class="hidden-sm-and-down">Google Contacts</span>
+        <span class="hidden-sm-and-down">Transactions App</span>
       </v-toolbar-title>
       <!-- <v-text-field
         flat
@@ -144,6 +144,11 @@ export default {
   components: {
     Transactions, EditTransactions
   },
+  computed: {
+    isLoggedIn() {
+      return this.$store.getters.isLoggedIn
+    }
+  },
   data: () => ({
     dialog: false,
     drawer: null,
@@ -155,6 +160,20 @@ export default {
       { icon: 'mdi-message', text: 'Send feedback' },
       { icon: 'mdi-help-circle', text: 'Help' },
     ]
-  })
+  }),
+  methods: {
+    mennuAction() {
+      // TODO
+    },
+    showProfile() {
+      console.log('show profile clicked!')
+    }
+  },
+  mounted() {
+    console.log('Is user logged in? ', this.isLoggedIn)
+    if(!this.isLoggedIn) {
+      this.$router.push({ path: '/login' })
+    }
+  }
 }
 </script>
