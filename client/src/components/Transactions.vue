@@ -81,27 +81,47 @@
 
 <script>
 export default {
+    computed: {
+        currentMonth() {
+            return this.$store.state.transactions.currentMonth
+        },
+        currentYear() {
+            return this.$store.state.transactions.currentYear
+        },
+        months() {
+            return this.$store.state.transactions.months
+        },
+        items() {
+            return this.$store.getters.transactionsByMonth
+        },
+        balanceCharges() {
+            return this.$store.getters.balanceCharges
+        },
+        balanceDeposits() {
+            return this.$store.getters.balanceDeposits
+        },
+    },
     data() {
         return {
-            months: [
-                { name: 'Zero', abrev: 'ZZZ', index: 0 },
-                { name: 'January', abrev: 'Jan', index: 1 },
-                { name: 'February', abrev: 'Feb', index: 2 },
-                { name: 'March', abrev: 'Mar', index: 3 },
-                { name: 'April', abrev: 'Apr', index: 4 },
-                { name: 'May', abrev: 'May', index: 5 },
-                { name: 'June', abrev: 'Jun', index: 6 },
-                { name: 'July', abrev: 'Jul', index: 7 },
-                { name: 'August', abrev: 'Aug', index: 8 },
-                { name: 'September', abrev: 'Sep', index: 9 },
-                { name: 'October', abrev: 'Oct', index: 10 },
-                { name: 'November', abrev: 'Nov', index: 11 },
-                { name: 'December', abrev: 'Dec', index: 12 },
-            ],
-            currentMonth: 4,
-            currentYear: 2020,
-            balanceCharges: 0,
-            balanceDeposits: 0,
+            // months: [
+            //     { name: 'Zero', abrev: 'ZZZ', index: 0 },
+            //     { name: 'January', abrev: 'Jan', index: 1 },
+            //     { name: 'February', abrev: 'Feb', index: 2 },
+            //     { name: 'March', abrev: 'Mar', index: 3 },
+            //     { name: 'April', abrev: 'Apr', index: 4 },
+            //     { name: 'May', abrev: 'May', index: 5 },
+            //     { name: 'June', abrev: 'Jun', index: 6 },
+            //     { name: 'July', abrev: 'Jul', index: 7 },
+            //     { name: 'August', abrev: 'Aug', index: 8 },
+            //     { name: 'September', abrev: 'Sep', index: 9 },
+            //     { name: 'October', abrev: 'Oct', index: 10 },
+            //     { name: 'November', abrev: 'Nov', index: 11 },
+            //     { name: 'December', abrev: 'Dec', index: 12 },
+            // ],
+            // currentMonth: 4,
+            // currentYear: 2020,
+            // balanceCharges: 0,
+            // balanceDeposits: 0,
             max25chars: (v) => v.length <= 25 || 'Input too long',
             search: '',
             pagination: {},
@@ -113,58 +133,80 @@ export default {
                 { text: 'Deposit (+)', align: 'center', sortable: false, value: 'depositAmt'},
                 { text: 'Balance', align: 'center', sortable: false, value: 'balance'},
             ],
-            items: [
-                {
-
-                }
-            ]
+            // items: [
+            //     {
+                        // 'id': '',
+                        // 'userId': '',
+                        // 'transactionDate': 'May-14',
+                        // 'transactionType': '',
+                        // 'description': '',
+                        // 'charge': 1233.0,
+                        // 'deposit': 0.0,
+                        // 'notes': ''
+            //     },
+            // ]
         }
     },
     methods: {
         getTransactionsByMonth() {
-
+            this.$store.dispatch('getTransactionsByMonth')
         },
         getPreviousMonthBalances() {
+            this.$store.dispatch('getPreviousMonthsBalances')
+        },
+        // mapTransaction: function (tx) {
+        //     const me = this
+        //     const transDate = new Date(tx.transactionDate)
+        //     let transaction = {
+        //         transactionDate: me.months[transDate.getUTCMonth() + 1].abrev + '-' + transDate,
+        //         transactionType: tx.transactionType,
+        //         description: tx.description,
+        //         charge: me.moneyFormatter(tx.charge),
+        //         deposit: me.moneyFormatter(tx.deposit),
+        //         balance: me.moneyFormatter(me.calcRunningBalance(tx))
+        //     }
 
-        },
-        mapTransaction: function (tx) {
-            const me = this
-            const transDate = new Date(tx.transactionDate)
-            let transaction = {
-                transactionDate: me.months[transDate.getUTCMonth() + 1].abrev + '-' + transDate,
-                transactionType: tx.transactionType,
-                description: tx.description,
-                charge: me.moneyFormatter(tx.charge),
-                deposit: me.moneyFormatter(tx.deposit),
-                balance: me.moneyFormatter(me.calcRunningBalance(tx))
-            }
+        //     return transaction
+        // },
+        // moneyFormatter: function (amount) {
+        //     let formatter = new Intl.NumberFormat('en-us', {
+        //         style: 'currency',
+        //         currency: 'USD',
+        //         minimumFractionDigits: 2
+        //     })
+        //     return formatter.format(amount)
+        // },
+        // calcRunningBalance: function (tx) {
 
-            return transaction
-        },
-        moneyFormatter: function (amount) {
-            let formatter = new Intl.NumberFormat('en-us', {
-                style: 'currency',
-                currency: 'USD',
-                minimumFractionDigits: 2
-            })
-            return formatter.format(amount)
-        },
-        calcRunningBalance: function (tx) {
-
-            // Check any new charges
-            if(tx && tx.charge > 0) {
-                this.balanceCharges += tx.charge
-            } else if(tx && tx.deposit > 0) {
-                this.balanceDeposits += tx.deposit
-            }
-            return this.balanceCharges - this.balanceDeposits
-        },
+        //     // Check any new charges
+        //     if(tx && tx.charge > 0) {
+        //         this.balanceCharges += tx.charge
+        //     } else if(tx && tx.deposit > 0) {
+        //         this.balanceDeposits += tx.deposit
+        //     }
+        //     return this.balanceCharges - this.balanceDeposits
+        // },
         gotoMonth(increment) {
-            console.log('okay')
+            this.$store.dispatch('gotoMonth').then(() => {
+                // Load Selected month transaction data
+                this.getPreviousMonthBalances()
+                this.getTransactionsByMonth()
+            })
         },
         gotoCurrentMonth() {
-            console.log('current')
+            this.$store.dispatch('gotoCurrentMonth').then(() => {
+                // Load Selected month transaction data
+                this.getPreviousMonthBalances()
+                this.getTransactionsByMonth()
+            })
         }
+    },
+    mounted: async function() {
+        await this.getPreviousMonthBalances()
+        await console.log(this.balanceCharges)
+        await console.log(this.balanceDeposits)
+
+        await this.getTransactionsByMonth()
     }
 }
 </script>
